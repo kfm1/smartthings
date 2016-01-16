@@ -45,34 +45,35 @@ metadata {
         command "setBlueLevel"
         command "setWhiteLevel"
 
-        command "fireplaceOn"
-        command "fireplaceOff"
-        command "stormOn"
-        command "stormOff"
-        command "deepfadeOn"
-        command "deepfadeOff"
-        command "litefadeOn"
-        command "litefadeOff"
-        command "policeOn"
-        command "policeOff"
+		// REMOVE COLORS:
+        //command "fireplaceOn"
+        //command "fireplaceOff"
+        //command "stormOn"
+        //command "stormOff"
+        //command "deepfadeOn"
+        //command "deepfadeOff"
+        //command "litefadeOn"
+        //command "litefadeOff"
+        //command "policeOn"
+        //command "policeOff"
         
-        command "red"
-        command "green"
-        command "blue"
-        command "white"
-        command "cyan"
-        command "magenta"
-        command "orange"
-        command "purple"
-        command "yellow"
-        command "pink"
-        command "coldWhite"
-        command "warmWhite"
-        command "fireplace"
-        command "storm"
-        command "deepfade"
-        command "litefade"
-        command "police"
+        //command "red"
+        //command "green"
+        //command "blue"
+        //command "white"
+        //command "cyan"
+        //command "magenta"
+        //command "orange"
+        //command "purple"
+        //command "yellow"
+        //command "pink"
+        //command "coldWhite"
+        //command "warmWhite"
+        //command "fireplace"
+        //command "storm"
+        //command "deepfade"
+        //command "litefade"
+        //command "police"
         
         command "reset"
 
@@ -83,7 +84,7 @@ metadata {
 	}
 
 	tiles (scale: 2){      
-		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
+		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, decoration: "flat", canChangeIcon: true){
 			tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
 				attributeState "on", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#79b821", nextState:"turningOff"
 				attributeState "off", label:'${name}', action:"switch.on", icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
@@ -93,24 +94,23 @@ metadata {
 			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
 				attributeState "level", action:"switch level.setLevel"
 			}
-			tileAttribute ("device.color", key: "COLOR_CONTROL") {
-				attributeState "color", action:"setColor"
-			}
+			//tileAttribute ("device.color", key: "COLOR_CONTROL") {
+			//	attributeState "color", action:"setColor"
+			//}
 			tileAttribute ("power", key: "SECONDARY_CONTROL") {
 				attributeState "power", label:'${currentValue} W'
 			}
         }
 
-        controlTile("colorTempControl", "device.colorTemperature", "slider", height: 1, width: 5, inactiveLabel: false) {
-			state "colorTemperature", action:"setColorTemperature"
-		}
+        //controlTile("colorTempControl", "device.colorTemperature", "slider", height: 1, width: 5, inactiveLabel: false) {
+		//	state "colorTemperature", action:"setColorTemperature"
+		//}
         
-////////////////////////// 
-        standardTile("red", "device.red", height: 1, width: 1, inactiveLabel: false, canChangeIcon: false) {
+        standardTile("red", "device.red", height: 1, width: 1, decoration: "flat", canChangeIcon: true) {
             state "off", label:"R", action:"redOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "on", label:"R", action:"redOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF0000"
         }
-        controlTile("redSliderControl", "device.redLevel", "slider", height: 1, width: 4, inactiveLabel: false) {
+        controlTile("redSliderControl", "device.redLevel", "slider", height: 1, width: 4, decoration: "flat") {
 			state "redLevel", action:"setRedLevel"
 		}
         valueTile("redValueTile", "device.redLevel", decoration: "flat", height: 1, width: 1) {
@@ -150,6 +150,7 @@ metadata {
         	state "whiteLevel", label:'${currentValue}%'
         }  
         
+        /*
         standardTile("fireplace", "device.fireplace", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
             state "off", label:"Fire Place", action:"fireplaceOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "on", label:"Fire Place", action:"fireplaceOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
@@ -171,8 +172,6 @@ metadata {
             state "on", label:"police", action:"policeOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
         }
         
-        
-///////////////////        
         standardTile("cyan", "device.cyan", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
             state "offcyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "oncyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00FFFF"
@@ -193,6 +192,9 @@ metadata {
             state "offyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "onyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFF00"
         }
+        
+        */
+        
 		standardTile("reset", "device.reset", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
 			state "default", label:"Reset Color", action:"reset", icon:"st.lights.philips.hue-single"
 		}
@@ -207,23 +209,26 @@ metadata {
              "green", "greenSliderControl", "greenValueTile",
              "blue", "blueSliderControl", "blueValueTile",
              "white", "whiteSliderControl", "whiteValueTile",
-             "fireplace", "storm", "deepfade",
-             "litefade", "police",
+             //"fireplace", "storm", "deepfade",
+             //"litefade", "police",
              "refresh" ])
 }
 
 def installed() {
-	configure()
+	log.info "Incoming hub command: install():  Calling configure..."
+    configure()
 }
 
 def updated() {
-	//response(refresh())
+	log.info "Incoming hub command: updated():  Calling configure..."
+    //response(refresh())
     configure()
     //getDeviceData()
 }
 
 def configure() {
-	log.debug "Configuring Device For SmartThings Use"
+	log.info "Incoming hub command: configure():"
+    log.debug "Configuring device for use with SmartThings..."
     
     sendEvent(name: "redLevel", value: 99)
     sendEvent(name: "greenLevel", value: 99)
@@ -237,45 +242,60 @@ def configure() {
 }
 
 def parse(description) {
-	def result = null
-	if (description != "updated") {
-		def cmd = zwave.parse(description, [0x20: 1, 0x26: 2, 0x70: 2, 0x72: 2, 0x60: 3, 0x33: 2, 0x32: 2, 0x31:2, 0x30: 2, 0x86: 1, 0x7A: 1])
+	log.info "Incoming ZWave Event: Parsing '${description}'..."
 
-        if (cmd) {
-			result = zwaveEvent(cmd)
-			log.debug("zwaveEvent parsed to $result")
-		} else {
-			log.debug("Couldn't parse '$description'")
-		}
-	}
-	result
+	if (description == "updated") {
+		log.debug("ZWave Event parsed as 'updated'.")
+        return null
+    }
+
+	def cmd = zwave.parse(description, [0x20: 1, 0x26: 2, 0x70: 2, 0x72: 2, 0x60: 3, 0x33: 2, 0x32: 2, 0x31:2, 0x30: 2, 0x86: 1, 0x7A: 1])
+	if (!cmd) {
+		log.debug("Couldn't parse ZWave Event '$description'")
+		return null
+    }
+    
+	def result = zwaveEvent(cmd)
+	log.debug("ZWave Event parsed to '$result'")
+	return result
 }
 
 def on() {
-	log.debug "on()"
+	log.info "Incoming hub command: on():"
 	//sendEvent(name: "switch", value: "on")
-    log.info "running program: ${state.runningProgram}"
-    log.info "colors are zeros is: ${colorsAreZeros()}"
+    log.debug "Current program (if any): '${state.runningProgram}'"
+    log.debug "previousHexLevels: '${state.previousHexLevels}'"
+    log.debug "colorsAreZeros() returns '${colorsAreZeros()}'"
     if ( state.runningProgram ) {
     	turnProgramOn(state.runningProgram.programName, state.runningProgram.programNumber)
     } else if ( state.previousHexLevels && !colorsAreZeros()) {
-    	log.info "Recalling previous color settings: ${state.previousHexLevels}"
+    	log.debug "Returning to previous color levels: ${state.previousHexLevels}"
     	resetToPreviousLevels(state.previousHexLevels)
     } else {
-		delayBetween([zwave.basicV1.basicSet(value: 0xFF).format(), 
-    			  	  zwave.switchMultilevelV1.switchMultilevelGet().format(),
-                      configure(),
-                      getDeviceData()
-                      ], 5000) 
+		log.warn "Could not find previous program or non-zero color levels. Resetting to defaults..."
+        delayBetween(
+        	[zwave.basicV1.basicSet(value: 0xFF).format(), 
+    		zwave.switchMultilevelV1.switchMultilevelGet().format(),
+            configure(),
+            getDeviceData()], 
+        5000) 
     }
 }
 
 def off() {
-	log.debug "off()"
-	sendEvent(name: "switch", value: "off", displayed: true, isStateChange: true)
-    toggleOffProgramTiles("allOfThem")
-    toggleOffColorTiles()
-	delayBetween ([zwave.basicV1.basicSet(value: 0x00).format(), zwave.switchMultilevelV1.switchMultilevelGet().format()], 5000)
+	log.info "Incoming hub command: off():"
+	
+    // KFM Added:  Save previous hex levels:
+    saveCurrentHexLevelState()
+    
+    sendEvent(name: "switch", value: "off", displayed: true, isStateChange: true)
+    //toggleOffProgramTiles("allOfThem")
+    //toggleOffColorTiles()
+    
+	delayBetween (
+    	[zwave.basicV1.basicSet(value: 0x00).format(), 
+        zwave.switchMultilevelV1.switchMultilevelGet().format()], 
+    5000)
 }
 
 def setLevel(level) {
@@ -283,53 +303,57 @@ def setLevel(level) {
 }
 
 def setLevel(level, duration) {
-	log.debug "setLevel() level = ${level}"
-	if(level > 99) level = 99
+	log.info "Incoming hub command: setLevel(level='${level}', dimmingDuration='${duration}')"
+	if (level > 99) level = 99
 	commands([
 		zwave.switchMultilevelV3.switchMultilevelSet(value: level, dimmingDuration: duration),
 		zwave.switchMultilevelV3.switchMultilevelGet(),
-	], (duration && duration < 12) ? (duration * 1000) : 3500)
+	], (durationInSeconds && durationInSeconds < 12) ? (duration * 1000) : 3500)
 }
 
 def setSaturation(percent) {
-	log.debug "setSaturation($percent)"
+	log.info "Incoming hub command: setSaturation(percent='${percent}')"
+    log.debug "Handing saturation off to setColor()..."
 	setColor(saturation: percent)
 }
 
 def setHue(value) {
-	log.debug "setHue($value)"
+	log.info "Incoming hub command: setHue(value='$value')"
+    log.debug "Handing hue off to setColor()..."
 	setColor(hue: value)
 }
 
 def setColor(value) {
+	log.info "Incoming hub command: setColor(value='${value}')"
+
 	def result = []
-	log.debug "setColor: ${value}"
         
 	if (value.hex) {
-    	log.debug "setting color with hex"
+    	log.debug "Setting color using RGB hex values..."
 		def c = value.hex.findAll(/[0-9a-fA-F]{2}/).collect { Integer.parseInt(it, 16) }
         result << zwave.switchColorV3.switchColorSet(red:c[0], green:c[1], blue:c[2])
 	} else {
-		log.debug "setting color with hue & saturation"
+		log.debug "Setting color using hue & saturation..."
         def hue = value.hue ?: device.currentValue("hue")
 		def saturation = value.saturation ?: device.currentValue("saturation")
-		if(hue == null) hue = 13
-		if(saturation == null) saturation = 13
+		if (hue == null) hue = 13
+		if (saturation == null) saturation = 13
 		def rgb = huesatToRGB(hue as Integer, saturation as Integer)
         def whiteValue = device.currentValue("colorTemperature")
+        log.debug "Hue and saturation map to RGB 0x${rgb[0]}${rgb[1]}${rgb[2]}"
         result << zwave.switchColorV3.switchColorSet(red: rgb[0], green: rgb[1], blue: rgb[2])
 	}
 
-	if(value.hue) sendEvent(name: "hue", value: value.hue, displayed: false)
-	if(value.hex) sendEvent(name: "color", value: value.hex, displayed: false)
-	if(value.switch) sendEvent(name: "switch", value: value.switch, displayed: false)
-	if(value.saturation) sendEvent(name: "saturation", value: value.saturation, displayed: false)
+	if (value.hue) sendEvent(name: "hue", value: value.hue, displayed: false)
+	if (value.hex) sendEvent(name: "color", value: value.hex, displayed: false)
+	if (value.switch) sendEvent(name: "switch", value: value.switch, displayed: false)
+	if (value.saturation) sendEvent(name: "saturation", value: value.saturation, displayed: false)
 
 	commands(result)
 }
 
 def setColorTemperature(percent) {
-	log.debug "setColorTemperature Percent: ${percent}"
+	log.info "Incoming hub command: setColorTemperature(percent='${percent}')"
     
     if ( percent >= 1 )
     	sendEvent(name: "white", value: "onwhite", descriptionText: "White Channel is 'ON'", isStateChange: true)
@@ -343,43 +367,51 @@ def setColorTemperature(percent) {
 }
 
 def reset() {
-	log.debug "reset()"
+	log.info "Incoming hub command: reset()"
+    log.debug "Resetting color to #ffffff"
 	sendEvent(name: "color", value: "#ffffff")
 	setColorTemperature(99)
 }
 
 def refresh() {
-	commands([
+	log.info "Incoming hub command: refresh()"
+    commands([
 		zwave.switchMultilevelV3.switchMultilevelGet(),
 	], 1000)
 }
 
 def redOn() {  
+    log.info "Incoming hub command: redOn()"
     def color = "red"
     def value = 99
-	log.debug "setting ${color} to ${value}"
+	log.debug "Setting ${color} to ${value} via setRedLevel()..."
     sendEvent(name: color, value: "on")
     sendEvent(name: "${color}Level", value: value)
     setRedLevel(value)
 }
 
 def redOff() {
+    log.info "Incoming hub command: redOff()"
     def color = "red"
     def value = 0
-	log.debug "setting ${color} to ${value}"
+	log.debug "Setting ${color} to ${value} via setRedLevel()..."
     sendEvent(name: color, value: "off")
     sendEvent(name: "${color}Level", value: value)
     setRedLevel(value)
 }
 
 def setRedLevel(value) {
-	toggleOffProgramTiles(value)
-	log.debug "setRedLevel: ${value}"
+	log.info "Incoming hub command: setRedLevel(value='${value}')"
+	//toggleOffProgramTiles(value)
     def level = Math.min(value as Integer, 99)    
     level = 255 * level/99 as Integer
-	log.debug "level: ${level}"
+	log.debug "Value maps to hex ${level}"
 	if ( value > 0 ) {
-    	if (device.latestValue("switch") == "off") { on() }
+    	if (device.latestValue("switch") == "off") { 
+        	log.debug "Switch is currently off.  Calling on() command..."
+        	on()
+            log.debug "Returned from on(). Continuing setRedLevel()..."
+        }
         sendEvent(name: "red", value: "on")
     } else {
     	sendEvent(name: "red", value: "off")
@@ -395,30 +427,36 @@ def setRedLevel(value) {
 }
 
 def greenOn() {
+    log.info "Incoming hub command: greenOn()"
     def color = "green"
     def value = 99
-	log.debug "setting ${color} to ${value}"
+	log.debug "Setting ${color} to ${value} via setGreenLevel()..."
     sendEvent(name: color, value: "on")
     sendEvent(name: "${color}Level", value: value)
     setGreenLevel(value)
 }
 
 def greenOff() {
-	def color = "green"
+	log.info "Incoming hub command: greenOff()"
+    def color = "green"
     def value = 0
-	log.debug "setting ${color} to ${value}"
+	log.debug "Setting ${color} to ${value} via setGreenLevel()..."
     sendEvent(name: color, value: "off")
     setGreenLevel(value)
 }
 
 def setGreenLevel(value) {
-	toggleOffProgramTiles(value)
-	log.debug "setGreenLevel: ${value}"
+	log.info "Incoming hub command: setGreenLevel(value='${value}')"
+	//toggleOffProgramTiles(value)
     def level = Math.min(value as Integer, 99)    
     level = 255 * level/99 as Integer
 	log.debug "level: ${level}"
 	if ( value > 0 ) {
-    	if (device.latestValue("switch") == "off") { on() }
+    	if (device.latestValue("switch") == "off") { 
+        	log.debug "Switch is currently off.  Calling on() command..."
+        	on()
+            log.debug "Returned from on(). Continuing setGreenLevel()..."
+        }
         sendEvent(name: "green", value: "on")
     } else {
     	sendEvent(name: "green", value: "off")
@@ -431,35 +469,41 @@ def setGreenLevel(value) {
     blueLevelNew = 255 * blueLevelNew/99 as Integer    
 
     def hexColorNew = "#${hex(redLevelNew)}${hex(greenLevelNew)}${hex(blueLevelNew)}"
-    log.info "New Hex Color Code: ${hexColorNew.toUpperCase()}"
+    log.debug "New Hex Color Code: ${hexColorNew.toUpperCase()}"
 
     setColor([hex: hexColorNew.toUpperCase(), isTileCommand: true])     
 }
 
 def blueOn() {
-	def color = "blue"
+	log.info "Incoming hub command: blueOn()"
+    def color = "blue"
     def value = 99
-	log.debug "setting ${color} to ${value}"
+	log.debug "Setting ${color} to ${value} via setBlueLevel()..."
     sendEvent(name: color, value: "on")
     setBlueLevel(value)
 }
 
 def blueOff() {
-	def color = "blue"
+	log.info "Incoming hub command: blueOff()"
+    def color = "blue"
     def value = 0
-	log.debug "setting ${color} to ${value}"
-    sendEvent(name: color, value: "off")
+	log.debug "Setting ${color} to ${value} via setBlueLevel()..."
+	sendEvent(name: color, value: "off")
     setBlueLevel(value)
 }
 
 def setBlueLevel(value) {
-	toggleOffProgramTiles(value)
-	log.debug "setBlueLevel: ${value}"
+	log.info "Incoming hub command: setBlueLevel(value='${value}')"
+	//toggleOffProgramTiles(value)
     def level = Math.min(value as Integer, 99)    
     level = 255 * level/99 as Integer
 	log.debug "level: ${level}"
 	if ( value > 0 ) {
-    	if (device.latestValue("switch") == "off") { on() }
+    	if (device.latestValue("switch") == "off") { 
+        	log.debug "Switch is currently off.  Calling on() command..."
+        	on()
+            log.debug "Returned from on(). Continuing setBlueLevel()..."
+        }
         sendEvent(name: "blue", value: "on") 
     } else {
     	sendEvent(name: "blue", value: "off")
@@ -478,31 +522,35 @@ def setBlueLevel(value) {
 }
 
 def whiteOn() {
-	log.debug "whiteOn()"
+	log.info "Incoming hub command: whiteOn()"
 	sendEvent(name: "white", value: "on", displayed: true, descriptionText: "White Channel is 'ON'", isStateChange: true)
     def channel = 0
 	def whiteLevel = hex(255)
-    def cmd = [String.format("3305010${channel}${whiteLevel}%02X", 50)]
-    cmd
+    //def cmd = [String.format("3305010${channel}${whiteLevel}%02X", 50)]
+    //cmd
 }
 
 def whiteOff() {
-	log.debug "whiteOff()"
+	log.info "Incoming hub command: whiteOff()"
 	sendEvent(name: "white", value: "off", displayed: true, descriptionText: "White Channel is 'OFF'", isStateChange: true)
 	def channel = 0
 	def whiteLevel = hex(0)
     setWhiteLevel(0)
-    def cmd = [String.format("3305010${channel}${whiteLevel}%02X", 50)]
-    cmd
+    //def cmd = [String.format("3305010${channel}${whiteLevel}%02X", 50)]
+    //cmd
 }
 
 def setWhiteLevel(value) {
-	log.debug "setwhiteLevel: ${value}"
+	log.info "Incoming hub command: setWhiteLevel(value='${value}')"
     def level = Math.min(value as Integer, 99)    
     level = 255 * level/99 as Integer
 	log.debug "level: ${level}"
 	if ( value > 0 ) {
-    	if (device.latestValue("switch") == "off") { on() }
+    	if (device.latestValue("switch") == "off") { 
+        	log.debug "Switch is currently off.  Calling on() command..."
+        	on()
+            log.debug "Returned from on(). Continuing setWhiteLevel()..."
+        }
         sendEvent(name: "white", value: "on")
     } else {
     	sendEvent(name: "white", value: "off")
@@ -513,6 +561,7 @@ def setWhiteLevel(value) {
     cmd    
 }
 
+/* 
 def fireplaceOn() {
 	log.debug "fireplaceOn()"
     turnProgramOn("fireplace", 6)
@@ -562,7 +611,9 @@ def policeOff() {
 	log.debug "policeOff()"
 	turnProgamOff("police")
 }
+*/
 
+/* 
 def red() { 
     def color = "red"
 	log.debug "turning on ${color}()"
@@ -671,6 +722,9 @@ def warmWhite() {
     sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
 }
 
+*/
+
+/* 
 def fireplace() { fireplaceOn() }
 
 def storm() { stormOn() }
@@ -680,6 +734,15 @@ def deepfade() { deepfadeOn() }
 def litefade() { litefadeOn() }
 
 def police() { policeOn() }
+
+*/
+
+def saveCurrentHexLevelState() {
+	def c = getCurrentHexLevels()
+    log.debug "Saving current light channel levels (R:${c["red"]} G:${c["green"]} B:${c["blue"]} W:${c["white"]})"
+	state.previousHexLevels = c
+}
+
 
 def getCurrentHexLevels() {
     def redLevelNew = Math.min(device.latestValue("redLevel") as Integer, 99)
@@ -693,7 +756,8 @@ def getCurrentHexLevels() {
     def currentHexLevels = ["red":		hex(redLevelNew),
     				   	    "green":	hex(greenLevelNew),
                             "blue":		hex(blueLevelNew),
-                            "white":	hex(whiteLevelNew)]                            
+                            "white":	hex(whiteLevelNew),
+                            "rgbw":		"${hex(redLevelNew)}${hex(greenLevelNew)}${hex(blueLevelNew)}${hex(whiteLevelNew)}"]                            
 	return currentHexLevels
 }
 
@@ -723,6 +787,7 @@ def resetToPreviousLevels(values) {
     sendRGBW(values.red,values.green,values.blue,values.white)
 }
 
+/* 
 def turnProgramOn(programName, programNumber) {
 	log.debug "Turning ${programName} On"
     state.runningProgram = ["programName": programName, "programNumber": programNumber]
@@ -748,6 +813,9 @@ def turnProgamOff(programName) {
     }    
 }
 
+*/
+
+/*
 def toggleOffProgramTiles(exceptThisTile) {
 	def programTiles = ["fireplace", "deepfade", "litefade", "storm", "police"]
     programTiles.each() {
@@ -793,15 +861,17 @@ def toggleTiles(pickedColor) {
             	cmds << sendEvent(name: tile, value: "off${tile}", displayed: false, isStateChange: true)
             }
             //if tile is a color, turn off all other color tiles but white
-            /*if ( colorTiles.any { it == pickedColor } ) {
-            	if (( pickedColor != "white" ) && ( tile != "white" )) {
-            		cmds << sendEvent(name: tile, value: "off${tile}", displayed: false, isStateChange: true)
-                }
-            }*/
+            //if ( colorTiles.any { it == pickedColor } ) {
+            //	if (( pickedColor != "white" ) && ( tile != "white" )) {
+            //		cmds << sendEvent(name: tile, value: "off${tile}", displayed: false, isStateChange: true)
+            //    }
+            //}
         }
     }    
     delayBetween(cmds, 2500)
 }
+
+*/
 
 def colorsAreZeros() {
 	def result = true
@@ -998,6 +1068,7 @@ def colorNameToRgb(color) {
 }
 
 def getDeviceData() {
+    log.info "Incoming hub command: getDeviceData()"
     def cmd = []   
     cmd << response(zwave.manufacturerSpecificV2.manufacturerSpecificGet()) 
     cmd << response(zwave.versionV1.versionGet())
@@ -1006,7 +1077,8 @@ def getDeviceData() {
 }
 
 private dimmerEvents(physicalgraph.zwave.Command cmd) {
-	def value = (cmd.value ? "on" : "off")
+	log.info "Incoming ZWave Event: dimmerEvents command:"
+    def value = (cmd.value ? "on" : "off")
 	def result = [createEvent(name: "switch", value: value, displayed: false)]
 	if (cmd.value) {
 		result << createEvent(name: "level", value: cmd.value, unit: "%")
@@ -1028,7 +1100,7 @@ private commands(commands, delay=200) {
 
 def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap cmd) {
 	def encapsulatedCommand = cmd.encapsulatedCommand([0x20: 1, 0x26: 2, 0x30: 2, 0x31: 2, 0x32: 2, 0x33: 2, 0x70: 2]) // can specify command class versions here like in zwave.parse
-	log.info ("Command from endpoint ${cmd.sourceEndPoint}: ${encapsulatedCommand}")
+	log.info ("Incoming ZWave Event: MultiChannelCmdEncap Command from endpoint #${cmd.sourceEndPoint}: '${encapsulatedCommand}'")
 	if ((cmd.sourceEndPoint >= 1) && (cmd.sourceEndPoint <= 5)) { // we don't need color report
     	if ( cmd.sourceEndPoint == 2 ) {
         	sendEvent(name: "redLevel", value: encapsulatedCommand.value)
@@ -1072,43 +1144,53 @@ def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap 
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.configurationv2.ConfigurationReport cmd) {
+    log.info "Incoming ZWave Event:  ConfigurationReport command"
     return "${device.displayName} parameter '${cmd.parameterNumber}' with a byte size of '${cmd.size}' is set to '${cmd.configurationValue}'"
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv1.SwitchMultilevelStartLevelChange cmd) {
-     log.debug " in multi start"
+	log.info "Incoming ZWave Event:  SwitchMultilevelStartLevelChange command"
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv1.SwitchMultilevelStopLevelChange cmd) {
-     //[response(zwave.basicV1.basicGet())]
-     log.debug " in multi stop"
+    log.info "Incoming ZWave Event:  SwitchMultilevelStopLevelChange command"
+	//[response(zwave.basicV1.basicGet())]
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.sensormultilevelv2.SensorMultilevelReport cmd) {
+    log.info "Incoming ZWave Event:  SensorMultilevelReport command"
     def result = [:]
     if ( cmd.sensorType == 4 ) { //power level comming in
    		result.name = "power"
     	result.value = cmd.scaledSensorValue
-    	result.descriptionText = "$device.displayName power usage is ${result.value} watt(s)"
+        def plural = (result.value == 1) ? "s" : ""
+    	result.descriptionText = "${device.displayName} power usage is ${result.value} watt${plural}"
         result.isStateChange
         sendEvent(name: result.name, value: result.value, displayed: false)
     }
     result
 }
 def zwaveEvent(physicalgraph.zwave.commands.basicv1.BasicReport cmd) {
-	dimmerEvents(cmd)
+	log.info "Incoming ZWave Event:  BasicReport command"
+    log.debug "Calling dimmerEvents..."
+    dimmerEvents(cmd)
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.basicv1.BasicSet cmd) {
+	log.info "Incoming ZWave Event:  BasicSet command"
+    log.debug "Calling dimmerEvents..."
 	dimmerEvents(cmd)
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
+	log.info "Incoming ZWave Event:  SwitchMultilevelReport command"
+    log.debug "Calling dimmerEvents..."
 	dimmerEvents(cmd)
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.hailv1.Hail cmd) {
-	response(command(zwave.switchMultilevelV1.switchMultilevelGet()))
+	log.info "Incoming ZWave Event:  Hail command"
+    response(command(zwave.switchMultilevelV1.switchMultilevelGet()))
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.securityv1.SecurityMessageEncapsulation cmd) {
