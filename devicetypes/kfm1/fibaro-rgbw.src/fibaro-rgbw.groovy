@@ -293,13 +293,13 @@ def on() {
     log.debug "Current program (if any): '${state.runningProgram}'"
     log.debug "previousHexLevels: '${state.previousHexLevels}'"
     log.debug "colorsAreZeros() returns '${colorsAreZeros()}'"
-    if ( state.runningProgram ) {
+    if (state.runningProgram) {
     	turnProgramOn(state.runningProgram.programName, state.runningProgram.programNumber)
-    } else if ( state.previousHexLevels && !colorsAreZeros()) {
+    } else if (state.previousHexLevels) { // && !colorsAreZeros()) {
     	log.debug "Returning to previous color levels: ${state.previousHexLevels}"
     	resetToPreviousLevels(state.previousHexLevels)
     } else {
-		log.warn "Could not find previous program or non-zero color levels. Resetting to defaults..."
+		log.warn "Could not find previous program or color levels. Resetting to defaults..."
         delayBetween(
         	[zwave.basicV1.basicSet(value: 0xFF).format(), 
     		zwave.switchMultilevelV1.switchMultilevelGet().format(),
