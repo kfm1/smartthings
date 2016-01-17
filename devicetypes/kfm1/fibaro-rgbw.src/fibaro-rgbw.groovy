@@ -15,7 +15,6 @@
  */
  
  // To Do:  
- //     * 2 modes: Colors and Independent channels 
  //     * Remove isTileCommand stuff
  //     * Figure better way of config
  // 
@@ -84,6 +83,8 @@ metadata {
 	}
 
 	tiles (scale: 2){      
+
+
 		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, decoration: "flat", canChangeIcon: true){
 			tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
 				attributeState "on", label:'${name}', action:"switch.off", icon:"st.lights.philips.hue-single", backgroundColor:"#79b821", nextState:"turningOff"
@@ -97,56 +98,76 @@ metadata {
 			//tileAttribute ("device.color", key: "COLOR_CONTROL") {
 			//	attributeState "color", action:"setColor"
 			//}
-			tileAttribute ("power", key: "SECONDARY_CONTROL") {
-				attributeState "power", label:'${currentValue} W'
-			}
+			//tileAttribute ("power", key: "SECONDARY_CONTROL") {
+			//	attributeState "power", label:'${currentValue} W'
+			//}
         }
+
+        standardTile("masterSwitch", "device.switch", height: 1, width: 1, decoration: "flat", canChangeIcon: true) {
+			state "on", 		label:'${name}', action:"switch.off", 	icon:"st.lights.philips.hue-single", backgroundColor:"#79b821", nextState:"turningOff"
+			state "off", 		label:'${name}', action:"switch.on", 	icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
+			state "turningOn", 	label:'${name}', action:"switch.off", 	icon:"st.lights.philips.hue-single", backgroundColor:"#79b821", nextState:"turningOff"
+			state "turningOff", label:'${name}', action:"switch.on", 	icon:"st.lights.philips.hue-single", backgroundColor:"#ffffff", nextState:"turningOn"
+        }
+
+        valueTile("power", "device.power", height: 1, width: 2) {
+        	state "power", label:'Master: ${currentValue}W'
+        }  
+
+        controlTile("masterLevel", "device.level", "slider", height: 1, width: 3, decoration: "flat") {
+			state "level", action:"switch level.setLevel"
+		}
+        
+        valueTile("masterLevelValue", "device.level", decoration: "flat", height: 1, width: 1) {
+        	state "level", label:'${currentValue}%'
+        }     
+		
 
         //controlTile("colorTempControl", "device.colorTemperature", "slider", height: 1, width: 5, inactiveLabel: false) {
 		//	state "colorTemperature", action:"setColorTemperature"
 		//}
         
-        standardTile("red", "device.red", height: 1, width: 1, decoration: "flat", canChangeIcon: true) {
+        standardTile("red", "device.red", height: 2, width: 2, decoration: "flat", canChangeIcon: true) {
             state "off", label:"R", action:"redOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"R", action:"redOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF0000"
+            state "on", label:"R", action:"redOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#D4A190"
         }
-        controlTile("redSliderControl", "device.redLevel", "slider", height: 1, width: 4, decoration: "flat") {
+        controlTile("redSliderControl", "device.redLevel", "slider", height: 2, width: 3, decoration: "flat") {
 			state "redLevel", action:"setRedLevel"
 		}
-        valueTile("redValueTile", "device.redLevel", decoration: "flat", height: 1, width: 1) {
+        valueTile("redValueTile", "device.redLevel", decoration: "flat", height: 2, width: 1) {
         	state "redLevel", label:'${currentValue}%'
         }     
         
-        standardTile("green", "device.green", height: 1, width: 1, inactiveLabel: false, canChangeIcon: false) {
+        standardTile("green", "device.green", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
             state "off", label:"G", action:"greenOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"G", action:"greenOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00FF00"
+            state "on", label:"G", action:"greenOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#A1D490"
         }
-        controlTile("greenSliderControl", "device.greenLevel", "slider", height: 1, width: 4, inactiveLabel: false) {
+        controlTile("greenSliderControl", "device.greenLevel", "slider", height: 2, width: 3, inactiveLabel: false) {
 			state "greenLevel", action:"setGreenLevel"
 		}
-        valueTile("greenValueTile", "device.greenLevel", decoration: "flat", height: 1, width: 1) {
+        valueTile("greenValueTile", "device.greenLevel", decoration: "flat", height: 2, width: 1) {
         	state "greenLevel", label:'${currentValue}%'
         }    
         
-        standardTile("blue", "device.blue", height: 1, width:1, inactiveLabel: false, canChangeIcon: false) {
+        standardTile("blue", "device.blue", height: 2, width:2, inactiveLabel: false, canChangeIcon: false) {
             state "off", label:"B", action:"blueOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"B", action:"blueOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#0000FF"
+            state "on", label:"B", action:"blueOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#90C3D4"
         }
-        controlTile("blueSliderControl", "device.blueLevel", "slider", height: 1, width: 4, inactiveLabel: false) {
+        controlTile("blueSliderControl", "device.blueLevel", "slider", height: 2, width: 3, inactiveLabel: false) {
 			state "blueLevel", action:"setBlueLevel"
 		}
-        valueTile("blueValueTile", "device.blueLevel", decoration: "flat", height: 1, width: 1) {
+        valueTile("blueValueTile", "device.blueLevel", decoration: "flat", height: 2, width: 1) {
         	state "blueLevel", label:'${currentValue}%'
         }  
         
-        standardTile("white", "device.white", height: 1, width: 1, inactiveLabel: false, canChangeIcon: false) {
+        standardTile("white", "device.white", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
             state "off", label:"W", action:"whiteOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "on", label:"W", action:"whiteOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
         }
-        controlTile("whiteSliderControl", "device.whiteLevel", "slider", height: 1, width: 4, inactiveLabel: false) {
+        controlTile("whiteSliderControl", "device.whiteLevel", "slider", height: 2, width: 3, inactiveLabel: false) {
 			state "whiteLevel", action:"setWhiteLevel"
 		}
-        valueTile("whiteValueTile", "device.whiteLevel", decoration: "flat", height: 1, width: 1) {
+        valueTile("whiteValueTile", "device.whiteLevel", decoration: "flat", height: 2, width: 1) {
         	state "whiteLevel", label:'${currentValue}%'
         }  
         
@@ -195,23 +216,29 @@ metadata {
         
         */
         
+        valueTile("power", "device.power", height: 1, width: 2) {
+        	state "power", label:'${currentValue} W'
+        }  
 		standardTile("reset", "device.reset", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
 			state "default", label:"Reset Color", action:"reset", icon:"st.lights.philips.hue-single"
 		}
-		standardTile("refresh", "device.switch", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
+		standardTile("refresh", "device.switch", inactiveLabel: false, decoration: "flat", width: 1, height: 1) {
 			state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
 		}        
     }
 
-	main(["switch"])
-	details(["switch", "levelSliderControl", "rgbSelector",
+	//main(["switch"])
+    main(["masterSwitch"])
+	details([
+    	//"switch", "levelSliderControl", "rgbSelector",
+        /* "masterSwitch",*/ "power", "masterLevel", "masterLevelValue",
              "red", "redSliderControl", "redValueTile",
              "green", "greenSliderControl", "greenValueTile",
              "blue", "blueSliderControl", "blueValueTile",
              "white", "whiteSliderControl", "whiteValueTile",
              //"fireplace", "storm", "deepfade",
              //"litefade", "police",
-             "refresh" ])
+             /* "power", */"refresh" ])
 }
 
 def installed() {
@@ -501,7 +528,7 @@ def setBlueLevel(value) {
 	if ( value > 0 ) {
     	if (device.latestValue("switch") == "off") { 
         	log.debug "Switch is currently off.  Calling on() command..."
-        	on()
+        	//on()
             log.debug "Returned from on(). Continuing setBlueLevel()..."
         }
         sendEvent(name: "blue", value: "on") 
@@ -548,7 +575,7 @@ def setWhiteLevel(value) {
 	if ( value > 0 ) {
     	if (device.latestValue("switch") == "off") { 
         	log.debug "Switch is currently off.  Calling on() command..."
-        	on()
+        	//on()
             log.debug "Returned from on(). Continuing setWhiteLevel()..."
         }
         sendEvent(name: "white", value: "on")
