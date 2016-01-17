@@ -20,15 +20,16 @@
  // 
 
 metadata {
-        definition (name: "Fibaro RGBW", namespace: "kfm1", author: "kfm1") {
-		capability "Switch Level"
+	definition (name: "Fibaro RGBW", namespace: "kfm1", author: "kfm1") {
 		capability "Actuator"
-        capability "Color Control"
-		capability "Color Temperature"
-		capability "Switch"
-		capability "Refresh"
-		capability "Sensor"
-        capability "Power Meter"
+		capability "Switch"						//	switch					on() off()
+		capability "Switch Level"				//  level					setLevel(n, n)
+		capability "Refresh"					//							refresh()
+		capability "Sensor"						//
+        capability "Power Meter"				//	power
+
+        //capability "Color Control"			//	hue saturation color	setHue() setSaturation() setColor()
+		//capability "Color Temperature"		//
 
         command "redOn"
         command "redOff"
@@ -44,46 +45,18 @@ metadata {
         command "setBlueLevel"
         command "setWhiteLevel"
 
-		// REMOVE COLORS:
-        //command "fireplaceOn"
-        //command "fireplaceOff"
-        //command "stormOn"
-        //command "stormOff"
-        //command "deepfadeOn"
-        //command "deepfadeOff"
-        //command "litefadeOn"
-        //command "litefadeOff"
-        //command "policeOn"
-        //command "policeOff"
-        
-        //command "red"
-        //command "green"
-        //command "blue"
-        //command "white"
-        //command "cyan"
-        //command "magenta"
-        //command "orange"
-        //command "purple"
-        //command "yellow"
-        //command "pink"
-        //command "coldWhite"
-        //command "warmWhite"
-        //command "fireplace"
-        //command "storm"
-        //command "deepfade"
-        //command "litefade"
-        //command "police"
-        
+		// KFM TODO: Must implement these!
+		command "setRGBWLevel"					// 	(n, n, n, n)
+		command "setRGBWMLevel"					//  (n, n, n, n, n)
+
         command "reset"
 
 		fingerprint deviceId: "0x1101", inClusters: "0x27,0x72,0x86,0x26,0x60,0x70,0x32,0x31,0x85,0x33"
 	}
 
-	simulator {
-	}
+	simulator {}
 
 	tiles (scale: 2){      
-
 
 		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, decoration: "flat", canChangeIcon: true){
 			tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
@@ -122,11 +95,6 @@ metadata {
         	state "level", label:'${currentValue}%'
         }     
 		
-
-        //controlTile("colorTempControl", "device.colorTemperature", "slider", height: 1, width: 5, inactiveLabel: false) {
-		//	state "colorTemperature", action:"setColorTemperature"
-		//}
-        
         standardTile("red", "device.red", height: 2, width: 2, decoration: "flat", canChangeIcon: true) {
             state "off", label:"R", action:"redOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
             state "on", label:"R", action:"redOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#D4A190"
@@ -171,51 +139,6 @@ metadata {
         	state "whiteLevel", label:'${currentValue}%'
         }  
         
-        /*
-        standardTile("fireplace", "device.fireplace", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "off", label:"Fire Place", action:"fireplaceOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"Fire Place", action:"fireplaceOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
-        }
-        standardTile("storm", "device.storm", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "off", label:"storm", action:"stormOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"storm", action:"stormOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
-        }
-        standardTile("deepfade", "device.deepfade", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "off", label:"deep fade", action:"deepfadeOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"deep fade", action:"deepfadeOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
-        }
-        standardTile("litefade", "device.litefade", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "off", label:"lite fade", action:"litefadeOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"lite fade", action:"litefadeOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
-        }
-        standardTile("police", "device.police", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "off", label:"police", action:"policeOn", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "on", label:"police", action:"policeOff", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFFFF"
-        }
-        
-        standardTile("cyan", "device.cyan", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "offcyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "oncyan", label:"cyan", action:"cyan", icon:"st.illuminance.illuminance.bright", backgroundColor:"#00FFFF"
-        }
-        standardTile("magenta", "device.magenta", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "offmagenta", label:"magenta", action:"magenta", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "onmagenta", label:"magenta", action:"magenta", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF00FF"
-        }
-        standardTile("orange", "device.orange", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "offorange", label:"orange", action:"orange", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "onorange", label:"orange", action:"orange", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FF6600"
-        }
-        standardTile("purple", "device.purple", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "offpurple", label:"purple", action:"purple", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "onpurple", label:"purple", action:"purple", icon:"st.illuminance.illuminance.bright", backgroundColor:"#BF00FF"
-        }
-        standardTile("yellow", "device.yellow", height: 2, width: 2, inactiveLabel: false, canChangeIcon: false) {
-            state "offyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.dark", backgroundColor:"#D8D8D8"
-            state "onyellow", label:"yellow", action:"yellow", icon:"st.illuminance.illuminance.bright", backgroundColor:"#FFFF00"
-        }
-        
-        */
-        
         valueTile("power", "device.power", height: 1, width: 2) {
         	state "power", label:'${currentValue} W'
         }  
@@ -227,8 +150,7 @@ metadata {
 		}        
     }
 
-	//main(["switch"])
-    main(["masterSwitch"])
+    main(["masterSwitch"])  // was: //main(["switch"])
 	details([
     	//"switch", "levelSliderControl", "rgbSelector",
         /* "masterSwitch",*/ "power", "masterLevel", "masterLevelValue",
@@ -242,7 +164,7 @@ metadata {
 }
 
 def installed() {
-	log.info "Incoming hub command: install():  Calling configure..."
+	log.info "Incoming hub command: installed():  Calling configure..."
     configure()
 }
 
@@ -255,41 +177,57 @@ def updated() {
 
 def configure() {
 	log.info "Incoming hub command: configure():"
-    log.debug "Configuring device for use with SmartThings..."
+    log.debug "Configuring device for initial use..."
+    log.debug "Sending events to set all channels to level 99..."
     
     sendEvent(name: "redLevel", value: 99)
     sendEvent(name: "greenLevel", value: 99)
     sendEvent(name: "blueLevel", value: 99)
     sendEvent(name: "whiteLevel", value: 99)
     
+    log.debug "Sending zwave association command... [TODO: Check necessity]"
     def cmds = []
     cmds << zwave.associationV2.associationSet(groupingIdentifier:5, nodeId:[zwaveHubNodeId]).format()
-
     delayBetween(cmds, 500)
 }
 
-def parse(description) {
-	log.info "Incoming ZWave Event: Parsing '${description}'..."
-
-	if (description == "updated") {
-		log.debug("ZWave Event parsed as 'updated'.")
-        return null
-    }
-
-	def cmd = zwave.parse(description, [0x20: 1, 0x26: 2, 0x70: 2, 0x72: 2, 0x60: 3, 0x33: 2, 0x32: 2, 0x31:2, 0x30: 2, 0x86: 1, 0x7A: 1])
-	if (!cmd) {
-		log.debug("Couldn't parse ZWave Event '$description'")
-		return null
-    }
-    
-	def result = zwaveEvent(cmd)
-	log.debug("ZWave Event parsed to '$result'")
-	return result
+def reset() {
+	log.info "Incoming hub command: reset()"
+    log.debug "Resetting color to #ffffff"
+    log.warn  "TODO: Need to implement reset of white channel!"
+	sendEvent(name: "color", value: "#ffffff")
+	//setColorTemperature(99)
 }
 
+def refresh() {
+	log.info "Incoming hub command: refresh()"
+    commands([
+		zwave.switchMultilevelV3.switchMultilevelGet(),
+	], 1000)
+}
+
+
+/**
+ * on() 
+ * 
+ *  State Transitions:
+ *    * [Always] Master Level + RGBW Levels to full power
+ */
 def on() {
 	log.info "Incoming hub command: on():"
 	//sendEvent(name: "switch", value: "on")
+
+    log.debug "Initial state:"
+	_loadState()
+    _printState()
+    
+    // Set all channels plus level to full power
+    //  Alternative: Reset to previous levels, but full power is simpler for users
+    //  Workflow in UI is click main on/off for full power, dive into details for all individual channel control and dimming.
+    
+    
+    
+    
     log.debug "Current program (if any): '${state.runningProgram}'"
     log.debug "previousHexLevels: '${state.previousHexLevels}'"
     log.debug "colorsAreZeros() returns '${colorsAreZeros()}'"
@@ -312,6 +250,15 @@ def on() {
 def off() {
 	log.info "Incoming hub command: off():"
 	
+	log.debug "Initial state:"    
+    _loadState()
+    _printState()
+    
+    // For now, just turn switch off
+    
+    
+    
+    
     // KFM Added:  Save previous hex levels:
     saveCurrentHexLevelState()
     
@@ -379,33 +326,6 @@ def setColor(value) {
 	commands(result)
 }
 
-def setColorTemperature(percent) {
-	log.info "Incoming hub command: setColorTemperature(percent='${percent}')"
-    
-    if ( percent >= 1 )
-    	sendEvent(name: "white", value: "onwhite", descriptionText: "White Channel is 'ON'", isStateChange: true)
-    else
-    	sendEvent(name: "white", value: "offwhite", descriptionText: "White Channel is 'OFF'", displayed: false, isStateChange: true)
-    
-	if(percent > 99) percent = 99
-	int warmValue = percent * 255 / 99
-
-    command(zwave.switchColorV3.switchColorSet(warmWhite:warmValue, coldWhite:(255 - warmValue)))
-}
-
-def reset() {
-	log.info "Incoming hub command: reset()"
-    log.debug "Resetting color to #ffffff"
-	sendEvent(name: "color", value: "#ffffff")
-	setColorTemperature(99)
-}
-
-def refresh() {
-	log.info "Incoming hub command: refresh()"
-    commands([
-		zwave.switchMultilevelV3.switchMultilevelGet(),
-	], 1000)
-}
 
 def redOn() {  
     log.info "Incoming hub command: redOn()"
@@ -588,185 +508,9 @@ def setWhiteLevel(value) {
     cmd    
 }
 
-/* 
-def fireplaceOn() {
-	log.debug "fireplaceOn()"
-    turnProgramOn("fireplace", 6)
-}
-
-def fireplaceOff() {
-	log.debug "fireplaceOff()"
-    turnProgamOff("fireplace")
-}
-
-def stormOn() {
-	log.debug "stormOn()"
-	turnProgramOn("storm", 7)
-}
-
-def stormOff() {
-	log.debug "stormOff()"
-	turnProgamOff("storm")
-}
-
-def deepfadeOn() {
-	log.debug "deepfadeOn()"
-	turnProgramOn("deepfade", 8)
-}
-
-def deepfadeOff() {
-	log.debug "deepfadeOff()"
-	turnProgamOff("deepfade")
-}
-
-def litefadeOn() {
-	log.debug "litefadeOn()"
-	turnProgramOn("litefade", 9)
-}
-
-def litefadeOff() {
-	log.debug "litefadeOff()"
-	turnProgamOff("litefade")
-}
-
-def policeOn() {
-	log.debug "policeOn()"
-	turnProgramOn("police", 10)
-}
-
-def policeOff() {
-	log.debug "policeOff()"
-	turnProgamOff("police")
-}
-*/
-
-/* 
-def red() { 
-    def color = "red"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def green() { 
-    def color = "green"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def blue() { 
-    def color = "blue"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def white() {
-    def color = "coldWhite"
-	log.debug "turning on white()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(255))
-}
-
-def cyan() {
-	def color = "cyan"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def magenta() {
-	def color = "magenta"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def orange() {
-	def color = "orange"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def purple() {
-	def color = "purple"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def yellow() {
-	def color = "yellow"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def pink() {
-	def color = "pink"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def coldWhite() {
-	def color = "coldWhite"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-def warmWhite() {
-	def color = "warmWhite"
-	log.debug "turning on ${color}()"
-    def rgbColor = colorNameToRgb(color)
-    def hexColor = rgbToHex(rgbColor)
-    setColor(hex: hexColor)
-    sendRGBW(hex(rgbColor.r), hex(rgbColor.g), hex(rgbColor.b), hex(0))
-}
-
-*/
-
-/* 
-def fireplace() { fireplaceOn() }
-
-def storm() { stormOn() }
-
-def deepfade() { deepfadeOn() }
-
-def litefade() { litefadeOn() }
-
-def police() { policeOn() }
-
-*/
-
 def saveCurrentHexLevelState() {
 	def c = getCurrentHexLevels()
-    log.debug "Saving current light channel levels (R:${c["red"]} G:${c["green"]} B:${c["blue"]} W:${c["white"]})"
+    log.debug "Saving current light channel levels (R:${c["red"]} G:${c["green"]} B:${c["blue"]} W:${c["white"]} M:${c["master"]})"
 	state.previousHexLevels = c
 }
 
@@ -780,10 +524,13 @@ def getCurrentHexLevels() {
     blueLevelNew = 255 * blueLevelNew/99 as Integer
     def whiteLevelNew = Math.min(device.latestValue("whiteLevel") as Integer, 99)
     whiteLevelNew = 255 * whiteLevelNew/99 as Integer
+    def masterLevelNew = Math.min(device.latestValue("level") as Integer, 99)
+    masterLevelNew = 255 * masterLevelNew/99 as Integer
     def currentHexLevels = ["red":		hex(redLevelNew),
     				   	    "green":	hex(greenLevelNew),
                             "blue":		hex(blueLevelNew),
                             "white":	hex(whiteLevelNew),
+                            "master":	hex(masterLevelNew),
                             "rgbw":		"${hex(redLevelNew)}${hex(greenLevelNew)}${hex(blueLevelNew)}${hex(whiteLevelNew)}"]                            
 	return currentHexLevels
 }
@@ -814,284 +561,10 @@ def resetToPreviousLevels(values) {
     sendRGBW(values.red,values.green,values.blue,values.white)
 }
 
-/* 
-def turnProgramOn(programName, programNumber) {
-	log.debug "Turning ${programName} On"
-    state.runningProgram = ["programName": programName, "programNumber": programNumber]
-    state.previousHexLevels = getCurrentHexLevels()
-	sendEvent(name: programName, value: "on")
-    toggleOffProgramTiles(programName)
-    toggleOffColorTiles()
-    if ( device.latestValue("switch") == "off" )
-    	sendEvent(name: "switch", value: "on")
-    updateZwaveParam([paramNumber:72, value:programNumber,  size:1])
-}
-
-def turnProgamOff(programName) {
-	sendEvent(name: programName, value: "off")
-    state.runningProgram = null
-    log.info "previous hex levels: ${state.previousHexLevels}"
-    if ( state.previousHexLevels ) {
-    	log.info "Previous levels in fireplaceOff is: ${state.previousHexLevels}"
-    	resetToPreviousLevels(state.previousHexLevels)
-    } else {
-    	log.info "No previous levels saved. Setting to all On"
-    	resetToPreviousLevels(["red": "FF", "green": "FF", "blue": "FF", "white": "FF"])
-    }    
-}
-
-*/
-
-/*
-def toggleOffProgramTiles(exceptThisTile) {
-	def programTiles = ["fireplace", "deepfade", "litefade", "storm", "police"]
-    programTiles.each() {
-    	if ( it != exceptThisTile )
-    		if ( device.latestValue(it) == "on" )
-    			sendEvent(name: it, value: "${it}Off", displayed: false, isStateChange: true)
-    }
-}
-
-def toggleOffColorTiles() {
-	sendEvent(name: "red", 		value: "redOff", 	displayed: false, isStateChange: true)
-    sendEvent(name: "green", 	value: "greenOff", 	displayed: false, isStateChange: true)
-    sendEvent(name: "blue", 	value: "blueOff", 	displayed: false, isStateChange: true)
-    sendEvent(name: "white", 	value: "whiteOff",	displayed: false, isStateChange: true)
-}
-
-def toggleTiles(pickedColor) {
-	log.debug "toggleTiles(${pickedColor})"    
-    def colorTiles = ["white","red","green","blue","cyan","magenta","orange","purple","yellow"]
-    def programTiles = ["fireplace", "deepfade", "litefade", "storm", "police"]
-    def allTiles = colorTiles + programTiles
-    def cmds = []
-    def description = ""
-    
-    for ( tile in allTiles ) {
-    	description = "RGB Channels set to ${pickedColor.capitalize()}"
-    	if ( tile == pickedColor ) { //turn on the tile picked
-        	if ( programTiles.any { it == pickedColor } ) {
-            	description = "Running Program ${pickedColor.capitalize()}"
-            }
-            if ( pickedColor == "white" ) {
-            	cmds << sendEvent(name: pickedColor, value: "on${pickedColor}", display: false, isStateChange: false )
-            } else {
-            	cmds << sendEvent(name: pickedColor, value: "on${pickedColor}", display: true, descriptionText: description, isStateChange: true)
-            }
-        } else if ( pickedColor == "white" ) {
-        	for ( program in programTiles ) {
-                cmds << sendEvent(name: program, value: "off${program}", displayed: false, isStateChange: true)
-            }              
-        } else {
-			//if tile is a program, turn off all other tiles
-            if ( programTiles.any { it == pickedColor } ) {
-            	cmds << sendEvent(name: tile, value: "off${tile}", displayed: false, isStateChange: true)
-            }
-            //if tile is a color, turn off all other color tiles but white
-            //if ( colorTiles.any { it == pickedColor } ) {
-            //	if (( pickedColor != "white" ) && ( tile != "white" )) {
-            //		cmds << sendEvent(name: tile, value: "off${tile}", displayed: false, isStateChange: true)
-            //    }
-            //}
-        }
-    }    
-    delayBetween(cmds, 2500)
-}
-
-*/
-
-def colorsAreZeros() {
-	def result = true
-    def redVal = 	device.latestValue("redLevel") as Integer
-    def greenVal =  device.latestValue("greenLevel") as Integer
-    def blueVal = 	device.latestValue("blueLevel") as Integer
-    def whiteVal =  device.latestValue("whiteLevel") as Integer
-    log.info "total colors = ${redVal + greenVal + blueVal + whiteVal}"
-    if ( redVal + greenVal + blueVal + whiteVal )
-    	result = false
-    result
-}
-
-def getColorDataFromHex(colorHex) {
-	log.debug "getColorDataFromHex: ${colorHex}"
-    
-    def colorRGB = hexToRgb(colorHex)
-	def colorHSL = rgbToHSL(colorRGB)
-        
-    def c = [:]
-    c = [h: colorHSL.h, 
-    			 s: colorHSL.s, 
-                 l: device.latestValue("level"), 
-                 r: colorRGB.r, 
-                 g: colorRGB.g,
-                 b: colorRGB.b,
-                 rh: hex(colorRGB.r),
-                 gh: hex(colorRGB.g),
-                 bh: hex(colorRGB.b),
-                 hex: colorHex,
-                 alpha: 1]
-     
-     def newValue = ["hex": c.hex, "hue": c.h, "saturation": c.s, "level": c.l, "red": c.r, "green": c.g, "blue": c.b, "alpha": c.alpha]
-     return newValue
-}
-
-def rgbToHSL(rgb) {
-	def r = rgb.r / 255
-    def g = rgb.g / 255
-    def b = rgb.b / 255
-    def h = 0
-    def s = 0
-    def l = 0
-    
-    def var_min = [r,g,b].min()
-    def var_max = [r,g,b].max()
-    def del_max = var_max - var_min
-    
-    l = (var_max + var_min) / 2
-    
-    if (del_max == 0) {
-            h = 0
-            s = 0
-    } else {
-    	if (l < 0.5) { s = del_max / (var_max + var_min) } 
-        else { s = del_max / (2 - var_max - var_min) }
-
-        def del_r = (((var_max - r) / 6) + (del_max / 2)) / del_max
-        def del_g = (((var_max - g) / 6) + (del_max / 2)) / del_max
-        def del_b = (((var_max - b) / 6) + (del_max / 2)) / del_max
-
-        if (r == var_max) { h = del_b - del_g } 
-        else if (g == var_max) { h = (1 / 3) + del_r - del_b } 
-        else if (b == var_max) { h = (2 / 3) + del_g - del_r }
-        
-		if (h < 0) { h += 1 }
-        if (h > 1) { h -= 1 }
-	}
-    def hsl = [:]    
-    hsl = [h: h * 100, s: s * 100, l: l]
-    
-    hsl
-}
-
-def hexToRgb(colorHex) {
-	def rrInt = Integer.parseInt(colorHex.substring(1,3),16)
-    def ggInt = Integer.parseInt(colorHex.substring(3,5),16)
-    def bbInt = Integer.parseInt(colorHex.substring(5,7),16)
-    
-    def colorData = [:]
-    colorData = [r: rrInt, g: ggInt, b: bbInt]
-    colorData
-}
-
-def rgbToHSV(red, green, blue) {
-	float r = red / 255f
-	float g = green / 255f
-	float b = blue / 255f
-	float max = [r, g, b].max()
-	float delta = max - [r, g, b].min()
-	def hue = 13
-	def saturation = 0
-	if (max && delta) {
-		saturation = 100 * delta / max
-		if (r == max) {
-			hue = ((g - b) / delta) * 100 / 6
-		} else if (g == max) {
-			hue = (2 + (b - r) / delta) * 100 / 6
-		} else {
-			hue = (4 + (r - g) / delta) * 100 / 6
-		}
-	}
-	[hue: hue, saturation: saturation, value: max * 100]
-}
-
-def huesatToRGB(float hue, float sat) {
-	while(hue >= 100) hue -= 100
-	int h = (int)(hue / 100 * 6)
-	float f = hue / 100 * 6 - h
-	int p = Math.round(255 * (1 - (sat / 100)))
-	int q = Math.round(255 * (1 - (sat / 100) * f))
-	int t = Math.round(255 * (1 - (sat / 100) * (1 - f)))
-	switch (h) {
-		case 0: return [255, t, p]
-		case 1: return [q, 255, p]
-		case 2: return [p, 255, t]
-		case 3: return [p, q, 255]
-		case 4: return [t, p, 255]
-		case 5: return [255, p, q]
-	}
-}
-
-def adjustOutgoingHue(percent) {
-	def adjusted = percent
-	if (percent > 31) {
-		if (percent < 63.0) {
-			adjusted = percent + (7 * (percent -30 ) / 32)
-		}
-		else if (percent < 73.0) {
-			adjusted = 69 + (5 * (percent - 62) / 10)
-		}
-		else {
-			adjusted = percent + (2 * (100 - percent) / 28)
-		}
-	}
-	log.info "percent: $percent, adjusted: $adjusted"
-	adjusted
-}
-
-def setAdjustedColor(value) {
-	if (value) {
-        log.trace "setAdjustedColor: ${value}"
-        def adjusted = value + [:]
-        adjusted.hue = adjustOutgoingHue(value.hue)
-        // Needed because color picker always sends 100
-        adjusted.level = null 
-        setColor(adjusted)
-    }
-}
 
 def sendRGBW(redHex, greenHex, blueHex, whiteHex) {
     def cmd = [String.format("33050400${whiteHex}02${redHex}03${greenHex}04${blueHex}%02X", 100),]
     cmd
-}
-
-private hex(value, width=2) {
-	def s = new BigInteger(Math.round(value).toString()).toString(16)
-	while (s.size() < width) {
-		s = "0" + s
-	}
-	s
-}
-def rgbToHex(rgb) {
-    def r = hex(rgb.r)
-    def g = hex(rgb.g)
-    def b = hex(rgb.b)
-    def hexColor = "#${r}${g}${b}"
-    
-    hexColor
-}
-
-def colorNameToRgb(color) {
-	final colors = [  
-        [name:"red", 		r: 255, g: 0,	b: 0	],
-		[name:"green", 		r: 0, 	g: 255,	b: 0	],
-        [name:"blue", 		r: 0, 	g: 0,	b: 255	],
-        
-		[name:"cyan", 		r: 0, 	g: 255,	b: 255	],
-        [name:"magenta", 	r: 255, g: 0,	b: 33	],       
-        [name:"orange", 	r: 255, g: 102, b: 0	],
-        
-        [name:"purple", 	r: 170, g: 0,	b: 255	],
-		[name:"yellow", 	r: 255, g: 160, b: 0	],
-        [name:"pink",		r: 255, g: 192, b: 203  ],
-        
-        [name:"coldWhite", 	r: 255, g: 255, b: 255	],
-        [name:"warmWhite", 	r: 255, g: 255, b: 185	]        
-	]
-    
-    def colorData = [:]    
-    colorData = colors.find { it.name == color }
-    
-    colorData
 }
 
 def getDeviceData() {
@@ -1123,6 +596,33 @@ private command(physicalgraph.zwave.Command cmd) {
 
 private commands(commands, delay=200) {
 	delayBetween(commands.collect{ command(it) }, delay)
+}
+
+
+
+/****************************************************
+ *
+ *  Incoming ZWave Event Handling
+ *
+ ****************************************************/
+
+def parse(description) {
+	log.info "Incoming ZWave Event: Parsing '${description}'..."
+
+	if (description == "updated") {
+		log.debug("ZWave Event parsed as 'updated'.")
+        return null
+    }
+
+	def cmd = zwave.parse(description, [0x20: 1, 0x26: 2, 0x70: 2, 0x72: 2, 0x60: 3, 0x33: 2, 0x32: 2, 0x31:2, 0x30: 2, 0x86: 1, 0x7A: 1])
+	if (!cmd) {
+		log.debug("Couldn't parse ZWave Event '$description'")
+		return null
+    }
+    
+	def result = zwaveEvent(cmd)
+	log.debug("ZWave Event parsed to '$result'")
+	return result
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.multichannelv3.MultiChannelCmdEncap cmd) {
@@ -1277,3 +777,362 @@ def updateZwaveParam(params) {
         delayBetween(cmds, 1500)        
     }
 }
+
+
+
+/****************************************************
+ *
+ *  State Tracking
+ *
+ ****************************************************/
+
+
+
+/**
+ * Called at the beginning of a hub event.  Does these things:
+ *   1. Loads current state of device
+ *   2. Clears stale items, like state.nextLevels
+ */
+def _loadState() {
+	
+    // Initialize presets if none exist, default is full power
+    //def channels = ["r", "g", "b", "w", "m"]
+    //channels.each({val ->
+    //	if (!state.presetLevels.containsKey(val)) state.presetLevels.(val) = 99	
+    //})
+    if (!state.presetLevels) state.presetLevels = [:]
+    if (!state.presetLevels.containsKey('r')) state.presetLevels.r = 99
+    if (!state.presetLevels.containsKey('g')) state.presetLevels.g = 99	
+    if (!state.presetLevels.containsKey('b')) state.presetLevels.b = 99	
+    if (!state.presetLevels.containsKey('w')) state.presetLevels.w = 99	
+    if (!state.presetLevels.containsKey('m')) state.presetLevels.m = 99	
+    
+    
+    // Set current levels
+    state.currentLevels = [
+    	r: Math.min(device.latestValue("redLevel") 		as Integer, 99),
+        g: Math.min(device.latestValue("greenLevel") 	as Integer, 99),
+        b: Math.min(device.latestValue("blueLevel") 	as Integer, 99),
+        w: Math.min(device.latestValue("whiteLevel") 	as Integer, 99),
+        m: Math.min(device.latestValue("level") 		as Integer, 99),
+    ]
+    
+    // We don't know the nextLevels yet.
+    state.nextLevels = [:]	
+}
+
+/**
+ * Prints the current state to the log.
+ */
+def _printState() {
+    log.debug "  * Device Status: Switch: ${device.latestValue('switch')} Level: ${device.latestValue('level')} Power: ${device.latestValue('power')}"
+    log.debug "  * Preset   Channel Levels: ${state.presetLevels}"
+    log.debug "  * Current  Channel Levels: ${state.currentLevels}"
+	log.debug "  * Next     Channel Levels: ${state.nextLevels}"
+
+}
+
+
+
+/****************************************************
+ *
+ *  Utility Functions
+ *
+ ****************************************************/
+
+
+//
+//  The next few functions translate between levels, values, and hex.
+//
+
+/**
+ * From a map of [r:, g:, b:, optional w:] channel levels, return hex string equivalent (6 or 8, no leading hashmark)
+ */
+def _rgbwLevelsToHex(levels) {
+	def hexString = "${_toHexFromLevel(levels.r)}${_toHexFromLevel(levels.g)}${_toHexFromLevel(levels.b)}"
+    if (levels.containsKey('w')) hexString.append(_toHexFromLevel(levels.w))
+    return hexString
+}
+
+/**
+ * Get RGB levels from a hex string (with optional leading hashmark).  W, if any, is ignored.
+ */
+def _rgbHexToLevels(hexString) {
+	hexString = hexString - "#"
+
+	def levels = [
+    	r: _toLevelFromHex(hexString.substring(0,2)),
+        g: _toLevelFromHex(hexString.substring(2,4)),
+        b: _toLevelFromHex(hexString.substring(4,6))
+    ]
+
+	return levels
+}
+
+/**
+ * Get RGBW levels from a hex string (with optional leading hashmark).  W is required.
+ */
+def _rgbwHexToLevels(hexString) {
+	def levels = _rgbHexToLevels(hexString)
+
+	hexString = hexString - "#"
+    levels.w = _toLevelFromHex(hexString.substring(6,8))
+    
+    return levels
+}
+
+/**
+ * Get the 0-99 level (i.e., intensity) integer from 00-FF hex.  Max is 99 (not 100)!
+ */
+def _toLevelFromHex(hexval, minLevel=0, maxLevel=99) {
+	def value = _fromHex(hexval)
+    return Math.max(minLevel, Math.min(maxLevel, 100*Math.round(value/255)))
+}
+
+/**
+ * Get the 00-FF hex equivalent of the 0-99 level (i.e., intensity percentage)
+ */
+def _toHexFromLevel(level, width=2, maxLevel=99) {
+	level = Math.min(maxLevel, level as Integer)
+    return _toHex(255 * (greenLevelNew/99 as Integer))
+}
+
+/**
+ * Convert a decimal value (e.g., 0 to 255) to hex with provided width.
+ */
+def _toHex(value, width=2) {
+	def s = new BigInteger(Math.round(value).toString()).toString(16)
+	while (s.size() < width) {
+		s = "0" + s
+	}
+	return s
+}
+
+/**
+ * Convert a hex value (e.g., 00 to FF) to decimal integer.
+ */
+def _fromHex(hexval) {
+	return Integer.parseInt(hexval,16)
+}
+
+
+
+
+
+
+
+// OLD
+
+private hex(value, width=2) {
+	def s = new BigInteger(Math.round(value).toString()).toString(16)
+	while (s.size() < width) {
+		s = "0" + s
+	}
+	s
+}
+
+def rgbToHex(rgb) {
+    def r = hex(rgb.r)
+    def g = hex(rgb.g)
+    def b = hex(rgb.b)
+    def hexColor = "#${r}${g}${b}"
+    
+    hexColor
+}
+
+
+
+
+
+
+/* 
+def colorNameToRgb(color) {
+	final colors = [  
+        [name:"red", 		r: 255, g: 0,	b: 0	],
+		[name:"green", 		r: 0, 	g: 255,	b: 0	],
+        [name:"blue", 		r: 0, 	g: 0,	b: 255	],
+        
+		[name:"cyan", 		r: 0, 	g: 255,	b: 255	],
+        [name:"magenta", 	r: 255, g: 0,	b: 33	],       
+        [name:"orange", 	r: 255, g: 102, b: 0	],
+        
+        [name:"purple", 	r: 170, g: 0,	b: 255	],
+		[name:"yellow", 	r: 255, g: 160, b: 0	],
+        [name:"pink",		r: 255, g: 192, b: 203  ],
+        
+        [name:"coldWhite", 	r: 255, g: 255, b: 255	],
+        [name:"warmWhite", 	r: 255, g: 255, b: 185	]        
+	]
+    
+    def colorData = [:]    
+    colorData = colors.find { it.name == color }
+    
+    colorData
+}
+
+*/
+
+def colorsAreZeros() {
+	def result = true
+    def redVal = 	device.latestValue("redLevel") as Integer
+    def greenVal =  device.latestValue("greenLevel") as Integer
+    def blueVal = 	device.latestValue("blueLevel") as Integer
+    def whiteVal =  device.latestValue("whiteLevel") as Integer
+    log.info "total colors = ${redVal + greenVal + blueVal + whiteVal}"
+    if ( redVal + greenVal + blueVal + whiteVal )
+    	result = false
+    result
+}
+
+def getColorDataFromHex(colorHex) {
+	log.debug "getColorDataFromHex: ${colorHex}"
+    
+    def colorRGB = hexToRgb(colorHex)
+	def colorHSL = rgbToHSL(colorRGB)
+        
+    def c = [:]
+    c = [h: colorHSL.h, 
+    			 s: colorHSL.s, 
+                 l: device.latestValue("level"), 
+                 r: colorRGB.r, 
+                 g: colorRGB.g,
+                 b: colorRGB.b,
+                 rh: hex(colorRGB.r),
+                 gh: hex(colorRGB.g),
+                 bh: hex(colorRGB.b),
+                 hex: colorHex,
+                 alpha: 1]
+     
+     def newValue = ["hex": c.hex, "hue": c.h, "saturation": c.s, "level": c.l, "red": c.r, "green": c.g, "blue": c.b, "alpha": c.alpha]
+     return newValue
+}
+
+def rgbToHSL(rgb) {
+	def r = rgb.r / 255
+    def g = rgb.g / 255
+    def b = rgb.b / 255
+    def h = 0
+    def s = 0
+    def l = 0
+    
+    def var_min = [r,g,b].min()
+    def var_max = [r,g,b].max()
+    def del_max = var_max - var_min
+    
+    l = (var_max + var_min) / 2
+    
+    if (del_max == 0) {
+            h = 0
+            s = 0
+    } else {
+    	if (l < 0.5) { s = del_max / (var_max + var_min) } 
+        else { s = del_max / (2 - var_max - var_min) }
+
+        def del_r = (((var_max - r) / 6) + (del_max / 2)) / del_max
+        def del_g = (((var_max - g) / 6) + (del_max / 2)) / del_max
+        def del_b = (((var_max - b) / 6) + (del_max / 2)) / del_max
+
+        if (r == var_max) { h = del_b - del_g } 
+        else if (g == var_max) { h = (1 / 3) + del_r - del_b } 
+        else if (b == var_max) { h = (2 / 3) + del_g - del_r }
+        
+		if (h < 0) { h += 1 }
+        if (h > 1) { h -= 1 }
+	}
+    def hsl = [:]    
+    hsl = [h: h * 100, s: s * 100, l: l]
+    
+    hsl
+}
+
+def hexToRgb(colorHex) {
+	def rrInt = Integer.parseInt(colorHex.substring(1,3),16)
+    def ggInt = Integer.parseInt(colorHex.substring(3,5),16)
+    def bbInt = Integer.parseInt(colorHex.substring(5,7),16)
+    
+    def colorData = [:]
+    colorData = [r: rrInt, g: ggInt, b: bbInt]
+    colorData
+}
+
+def rgbToHSV(red, green, blue) {
+	float r = red / 255f
+	float g = green / 255f
+	float b = blue / 255f
+	float max = [r, g, b].max()
+	float delta = max - [r, g, b].min()
+	def hue = 13
+	def saturation = 0
+	if (max && delta) {
+		saturation = 100 * delta / max
+		if (r == max) {
+			hue = ((g - b) / delta) * 100 / 6
+		} else if (g == max) {
+			hue = (2 + (b - r) / delta) * 100 / 6
+		} else {
+			hue = (4 + (r - g) / delta) * 100 / 6
+		}
+	}
+	[hue: hue, saturation: saturation, value: max * 100]
+}
+
+def huesatToRGB(float hue, float sat) {
+	while(hue >= 100) hue -= 100
+	int h = (int)(hue / 100 * 6)
+	float f = hue / 100 * 6 - h
+	int p = Math.round(255 * (1 - (sat / 100)))
+	int q = Math.round(255 * (1 - (sat / 100) * f))
+	int t = Math.round(255 * (1 - (sat / 100) * (1 - f)))
+	switch (h) {
+		case 0: return [255, t, p]
+		case 1: return [q, 255, p]
+		case 2: return [p, 255, t]
+		case 3: return [p, q, 255]
+		case 4: return [t, p, 255]
+		case 5: return [255, p, q]
+	}
+}
+
+def adjustOutgoingHue(percent) {
+	def adjusted = percent
+	if (percent > 31) {
+		if (percent < 63.0) {
+			adjusted = percent + (7 * (percent -30 ) / 32)
+		}
+		else if (percent < 73.0) {
+			adjusted = 69 + (5 * (percent - 62) / 10)
+		}
+		else {
+			adjusted = percent + (2 * (100 - percent) / 28)
+		}
+	}
+	log.info "percent: $percent, adjusted: $adjusted"
+	adjusted
+}
+
+def setAdjustedColor(value) {
+	if (value) {
+        log.trace "setAdjustedColor: ${value}"
+        def adjusted = value + [:]
+        adjusted.hue = adjustOutgoingHue(value.hue)
+        // Needed because color picker always sends 100
+        adjusted.level = null 
+        setColor(adjusted)
+    }
+}
+
+/* 
+def setColorTemperature(percent) {
+	log.info "Incoming hub command: setColorTemperature(percent='${percent}')"
+    
+    if ( percent >= 1 )
+    	sendEvent(name: "white", value: "onwhite", descriptionText: "White Channel is 'ON'", isStateChange: true)
+    else
+    	sendEvent(name: "white", value: "offwhite", descriptionText: "White Channel is 'OFF'", displayed: false, isStateChange: true)
+    
+	if(percent > 99) percent = 99
+	int warmValue = percent * 255 / 99
+
+    command(zwave.switchColorV3.switchColorSet(warmWhite:warmValue, coldWhite:(255 - warmValue)))
+}
+*/
