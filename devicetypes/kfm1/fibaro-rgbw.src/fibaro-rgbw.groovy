@@ -165,13 +165,13 @@ metadata {
 
 def installed() {
 	log.info "Incoming hub command: installed():  Calling configure..."
-    configure()
+    return configure()
 }
 
 def updated() {
 	log.info "Incoming hub command: updated():  Calling configure..."
     //response(refresh())
-    configure()
+    return configure()
     //getDeviceData()
 }
 
@@ -180,6 +180,7 @@ def configure() {
     log.debug "Configuring device for initial use..."
     log.debug "Sending events to set all channels to level 99..."
     
+    // KFM TODO: Should this just be a power on?
     sendEvent(name: "redLevel", value: 99)
     sendEvent(name: "greenLevel", value: 99)
     sendEvent(name: "blueLevel", value: 99)
@@ -188,14 +189,16 @@ def configure() {
     log.debug "Sending zwave association command... [TODO: Check necessity]"
     def cmds = []
     cmds << zwave.associationV2.associationSet(groupingIdentifier:5, nodeId:[zwaveHubNodeId]).format()
-    delayBetween(cmds, 500)
+    return delayBetween(cmds, 500)
 }
 
 def reset() {
 	log.info "Incoming hub command: reset()"
     log.debug "Resetting color to #ffffff"
     log.warn  "TODO: Need to implement reset of white channel!"
-	sendEvent(name: "color", value: "#ffffff")
+	
+    // KFM TODO: Use something better, like on.
+    sendEvent(name: "color", value: "#ffffff")
 	//setColorTemperature(99)
 }
 
@@ -208,16 +211,16 @@ def refresh() {
 
 
 /**
- * on() 
+ * on() -- Turn all channels and levels on and to full power
  * 
  *  State Transitions:
  *    * [Always] Master Level + RGBW Levels to full power
  */
 def on() {
-	log.info "Incoming hub command: on():"
+	log.info "on(): Incoming hub command: on():"
 	//sendEvent(name: "switch", value: "on")
 
-    log.debug "Initial state:"
+    log.debug "on(): Initial state:"
 	_loadState()
     _printState()
     
@@ -225,9 +228,18 @@ def on() {
     //  Alternative: Reset to previous levels, but full power is simpler for users
     //  Workflow in UI is click main on/off for full power, dive into details for all individual channel control and dimming.
     
+    log.debug "on(): Setting all channels to 99 via setChannels()..."
+    def levels = [r: 99, g:99, b:99, w:99, m:99]
+    def result = _buildChannelLevelsUpdateCommands(levels)
     
+    log.debug "on(): Result from _buildChannels(): ${result}"
     
+    log.debug "on(): Returned from _buildChannels.  Current state:"
+    _printState();
     
+    //return result
+    
+    // OLD STUFF:
     log.debug "Current program (if any): '${state.runningProgram}'"
     log.debug "previousHexLevels: '${state.previousHexLevels}'"
     log.debug "colorsAreZeros() returns '${colorsAreZeros()}'"
@@ -247,17 +259,31 @@ def on() {
     }
 }
 
+/**
+ * off() -- Set all channels and levels to 0, which will turn the switch off
+ * 
+ *  State Transitions:
+ *    * [Always] Master Level + RGBW Levels to 0 power
+ */
 def off() {
-	log.info "Incoming hub command: off():"
+	log.info "off(): Incoming hub command: off():"
 	
-	log.debug "Initial state:"    
+	log.debug "off(): Initial state:"    
     _loadState()
     _printState()
     
-    // For now, just turn switch off
+    log.debug "off(): Setting all channels to 0... KFM TODO: Leave master level alone?"
+    def levels = [r: 0, g: 0, b: 0, w: 0, m: 0]
+	def result = _buildChannelLevelsUpdateCommands(levels)
     
+    log.debug "off(): Result from _buildChannelLevelsUpdateCommands(): ${result}"
     
+    log.debug "off(): Returned from _buildChannelLevelsUpdateCommands.  Current state:"
+    _printState();
     
+    //return result
+    
+    // OLD STUFF BELOW:
     
     // KFM Added:  Save previous hex levels:
     saveCurrentHexLevelState()
@@ -271,6 +297,145 @@ def off() {
         zwave.switchMultilevelV1.switchMultilevelGet().format()], 
     5000)
 }
+
+/**
+ * _buildChannelLevelsUpdateCommands(levels) -- Generate commands to set channel levels
+ *
+ *  Param: levels -> map of channel name (r, g, b, w, m) to integer level 0-99. Any levels not defined will
+ *  keep their current value
+ * 
+ */
+def _buildChannelLevelsUpdateCommands(levels) {
+	log.debug "_buildChannelLevelsUpdateCommands(): input levels='${levels}')"
+
+	// Levels should be expressed as ints
+    /* 
+    if (levels.containsKey('r') && !(levels.r instanceof Integer)) {
+    	log.debug "_buildChannelLevelsUpdateCommands(): Coercing string r value '${levels.r}' to int."
+        levels.r = levels.r.toInteger()
+    }
+    if (levels.containsKey('g') && !(levels.g instanceof Integer)) {
+    	log.debug "_buildChannelLevelsUpdateCommands(): Coercing string g value '${levels.g}' to int."
+        levels.g = levels.g.toInteger()
+    }
+    if (levels.containsKey('b') && !(levels.b instanceof Integer)) {
+    	log.debug "_buildChannelLevelsUpdateCommands(): Coercing string b value '${levels.b}' to int."
+        levels.b = levels.b.toInteger()
+    }
+    if (levels.containsKey('w') && !(levels.w instanceof Integer)) {
+    	log.debug "_buildChannelLevelsUpdateCommands(): Coercing string w value '${levels.w}' to int."
+        levels.w = levels.w.toInteger()
+    }
+    if (levels.containsKey('m') && !(levels.m instanceof Integer)) {
+    	log.debug "_buildChannelLevelsUpdateCommands(): Coercing string m value '${levels.m}' to int."
+        levels.m = levels.m.toInteger()
+    }
+	*/
+
+	// Any channel levels that aren't being expressly set will retain their current values:
+    if (!levels.containsKey('r')) levels.r = state.currentLevels.r
+    if (!levels.containsKey('g')) levels.g = state.currentLevels.g
+    if (!levels.containsKey('b')) levels.b = state.currentLevels.b
+    if (!levels.containsKey('w')) levels.w = state.currentLevels.w
+    
+    // If master level is not being expressly set, set it to the max of the new levels
+    //   This means that all zeros in the channels will set master to zero.
+    //   KFM TODO: Consider setting to 99? Or this:
+    //   Currently all zeroes and setting a channel to non-zero -> set to 99, otherwise set to current value?
+    if (!levels.containsKey('m')) {
+    	def channelLevels = [levels.r, levels.g, levels.b, levels.w]
+    	levels.m = channelLevels.max()
+    }
+    
+    def updateCommands = []
+    
+	// Update the RGB channels if necessary:
+    def rgbUpdateRequired = (state.currentLevels.r != levels.r) || (state.currentLevels.g != levels.g) || (state.currentLevels.b != levels.b)
+    if (!rgbUpdateRequired) {
+    	log.debug "_buildChannelLevelsUpdateCommands():  No updates to RGB channels required."
+    } else {
+    	log.debug "_buildChannelLevelsUpdateCommands():  Detected a change in RGB levels.  Building Z-Wave RGB channel update command..."
+		updateCommands << _buildRGBChannelLevelsUpdateCommands(levels)
+    }
+    
+	// Update the W channel if necessary:
+    def wUpdateRequired = (state.currentLevels.w != levels.w)
+    if (!wUpdateRequired) {
+    	log.debug "_buildChannelLevelsUpdateCommands():  No update to W channel is required."
+    } else {
+    	log.debug "_buildChannelLevelsUpdateCommands:  Detected a change in W level.  Building Z-Wave W channel update command..."
+		updateCommands << _buildWChannelLevelUpdateCommands(levels.w)
+    }
+   
+	// Update the M channel if necessary:
+    def mUpdateRequired = (state.currentLevels.m != levels.m)
+    if (!mUpdateRequired) {
+    	log.debug "_buildChannelLevelsUpdateCommands():  No update to M channel is required."
+    } else {
+    	log.debug "_buildChannelLevelsUpdateCommands():  Detected a change in M level.  Building Z-Wave M channel update command..."
+		updateCommands << _buildMChannelLevelUpdateCommands(levels.m)
+    }
+   
+	return updateCommands
+}
+
+/**
+ * _buildRGBChannelLevelsUpdateCommands(levels) -- Generate commands to set RGB channel levels
+ *
+ *  Param: levels -> map of channel name (r, g, b) to integer level 0-99. ALL LEVELS MUST BE DEFINED!
+ */
+def _buildRGBChannelLevelsUpdateCommands(levels) {
+	log.debug "_buildRGBChannelLevelsUpdateCommands():  Setting RGB channel levels to r:${levels.r} g:${levels.g} b:${levels.b}"
+    
+    def rH = _toHexFromLevel(levels.r);
+    def gH = _toHexFromLevel(levels.g);
+    def bH = _toHexFromLevel(levels.b);
+    
+    log.debug "_buildRGBChannelLevelsUpdateCommands():  RGB Hex Equivalents: r:0x${rH} g:0x${gH} b:0x${bH}"
+    def rgbCmd = zwave.switchColorV3.switchColorSet(red: _fromHex(rH), green: _fromHex(gH), blue: _fromHex(bH))
+    def cmds = commands(rgbCmd)
+    log.debug "_buildRGBChannelLevelsUpdateCommands():  Command(s) result: ${cmds}"
+	return cmds
+}
+
+/**
+ * _buildRGBChannelLevelsUpdateCommands(level) -- Generate command(s) to set W channel levels
+ *
+ *  Param: level -> Integer level 0-99
+ */
+def _buildWChannelLevelUpdateCommands(wL) {
+	log.debug "_buildWChannelLevelUpdateCommands():  Setting W channel level to '${wL}'"
+    def wChannel = 0
+    def wH = _toHexFromLevel(wL);
+    
+    log.debug "_buildWChannelLevelUpdateCommands():  W level hex equivalents 0x${wH}"
+    def wCmd = String.format("3305010${wChannel}${wH}%02X", 50)
+    log.debug "_buildWChannelLevelUpdateCommands():  Command result: ${wCmd}"
+	return [wCmd]
+}
+
+/**
+ * _buildRGBChannelLevelsUpdateCommands(level) -- Generate command(s) to set W channel levels
+ *
+ *  Param: level -> Integer level 0-99
+ *  Returns: list of commands with 
+ */
+def _buildMChannelLevelUpdateCommands(mL) {
+	log.debug "_buildMChannelLevelUpdateCommands():  Setting M channel level to '${mL}'"
+    
+    def mH = _toHexFromLevel(mL);
+    log.debug "_buildMChannelLevelUpdateCommands():  M level hex equivalent: 0x${mH}"
+
+	def mCmd = zwave.switchMultilevelV3.switchMultilevelSet(value: mL, dimmingDuration: 1)
+    def cmds = commands(mCmd)
+    log.debug "_buildWChannelLevelUpdateCommands():  Command result: ${cmds}"
+	return cmds
+}
+
+
+
+
+
 
 def setLevel(level) {
 	setLevel(level, 1)
@@ -329,7 +494,12 @@ def setColor(value) {
 
 def redOn() {  
     log.info "Incoming hub command: redOn()"
-    def color = "red"
+
+	
+
+
+
+	def color = "red"
     def value = 99
 	log.debug "Setting ${color} to ${value} via setRedLevel()..."
     sendEvent(name: color, value: "on")
@@ -423,7 +593,26 @@ def setGreenLevel(value) {
 
 def blueOn() {
 	log.info "Incoming hub command: blueOn()"
-    def color = "blue"
+
+	log.debug "blueOn(): Initial state:"    
+    _loadState()
+    _printState()
+    
+    log.debug "blueOn(): Setting blue channel to 99... KFM TODO: Leave master level alone?"
+    def levels = [b: 99]
+	def result = _buildChannelLevelsUpdateCommands(levels)
+    
+    log.debug "blueOn(): Result from _buildChannelLevels(): ${result}"
+    
+    log.debug "blueOn(): Returned from _buildChannelLevels.  Current state:"
+    _printState();
+    
+    return result
+
+
+
+
+	def color = "blue"
     def value = 99
 	log.debug "Setting ${color} to ${value} via setBlueLevel()..."
     sendEvent(name: color, value: "on")
@@ -432,7 +621,26 @@ def blueOn() {
 
 def blueOff() {
 	log.info "Incoming hub command: blueOff()"
-    def color = "blue"
+
+	log.debug "blueOff(): Initial state:"    
+    _loadState()
+    _printState()
+    
+    log.debug "blueOff(): Setting blue channel to 0... KFM TODO: Leave master level alone?"
+    def levels = [b: 0]
+	def result = _buildChannelLevelsUpdateCommands(levels)
+    
+    log.debug "blueOff(): Result from _buildChannelLevels(): ${result}"
+    
+    log.debug "blueOff(): Returned from _buildChannelLevels.  Current state:"
+    _printState();
+    
+    return result
+
+
+
+
+	def color = "blue"
     def value = 0
 	log.debug "Setting ${color} to ${value} via setBlueLevel()..."
 	sendEvent(name: color, value: "off")
@@ -442,6 +650,25 @@ def blueOff() {
 def setBlueLevel(value) {
 	log.info "Incoming hub command: setBlueLevel(value='${value}')"
 	//toggleOffProgramTiles(value)
+    
+	log.debug "setBlueLevel(): Initial state:"    
+    _loadState()
+    _printState()
+    
+    log.debug "setBlueLevel(): Setting blue channel to ${value}... KFM TODO: Leave master level alone?"
+    def levels = [b: value]
+	def result = _buildChannelLevelsUpdateCommands(levels)
+    
+    log.debug "setBlueLevel(): Result from _buildChannelLevels(): ${result}"
+    
+    log.debug "setBlueLevel(): Returned from _buildChannelLevels.  Current state:"
+    _printState();
+    
+    return result
+    
+    
+    
+    
     def level = Math.min(value as Integer, 99)    
     level = 255 * level/99 as Integer
 	log.debug "level: ${level}"
@@ -894,7 +1121,7 @@ def _toLevelFromHex(hexval, minLevel=0, maxLevel=99) {
  */
 def _toHexFromLevel(level, width=2, maxLevel=99) {
 	level = Math.min(maxLevel, level as Integer)
-    return _toHex(255 * (greenLevelNew/99 as Integer))
+    return _toHex((255 * (level/99)) as Integer)
 }
 
 /**
